@@ -16,7 +16,7 @@ const (
 // URL's for the various API calls.
 var (
 	secrets           *config
-	ShopActiveListing = "shops/%d/listings/active" // Shop ID
+	shopActiveListing = "shops/%d/listings/active" // Shop ID
 	ShopListing       = "shops/listing/%d"         // Listing ID
 )
 
@@ -38,7 +38,7 @@ func urlBuilder(kind, limit, offset string, auth bool) (*url.URL, error) {
 
 	switch kind {
 	case "GetActiveListings":
-		u.Path = fmt.Sprintf("%s/%s", u.Path, fmt.Sprintf(ShopActiveListing, secrets.API.ShopID))
+		u.Path = fmt.Sprintf("%s/%s", u.Path, fmt.Sprintf(shopActiveListing, secrets.API.ShopID))
 	default:
 		return nil, fmt.Errorf("kind %q does not match available methods", kind)
 	}
