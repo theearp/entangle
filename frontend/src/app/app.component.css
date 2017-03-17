@@ -1,0 +1,12 @@
+.defaultBar {
+    background-image: url('../assets/anvil.jpg');
+    background-position: 50% 24%, center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.recImgs {
+    height: 100%;
+}

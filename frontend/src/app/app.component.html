@@ -1,3 +1,44 @@
-<h1>
-  {{title}}
-</h1>
+<md-grid-list cols="4" rowHeight="100px">
+  <md-grid-tile
+      [colspan]="4"
+      [rowspan]="3">
+    <div class="defaultBar"></div>
+  </md-grid-tile>
+</md-grid-list>
+
+<md-toolbar>
+  <span>Country Lead Works</span>
+
+  <!-- This fills the remaining space of the current row -->
+  <span class="fill-remaining-space"></span>
+
+  <button md-icon-button [mdMenuTriggerFor]="menu">
+    <md-icon>more_vert</md-icon>
+  </button>
+  <md-menu #menu="mdMenu">
+    <button md-menu-item>
+      <md-icon>done</md-icon>
+      <span>Option 1</span>
+    </button>
+    <button md-menu-item disabled>
+      <md-icon>info</md-icon>
+      <span>Option 2</span>
+    </button>
+    <button md-menu-item>
+      <md-icon>polymer</md-icon>
+      <span>Option 3</span>
+    </button>
+  </md-menu>
+</md-toolbar>
+
+<md-grid-list [cols]="recCols" rowHeight="90px">
+  <md-grid-tile
+      *ngFor="let product of recs"
+      [colspan]="1"
+      [rowspan]="3"
+      [style.background]="primary">
+    <md-grid-tile-header>{{ product.name }}</md-grid-tile-header>
+    <img [src]="product.img" [alt]="product.name" class="recImgs">
+    <md-grid-tile-footer>footer</md-grid-tile-footer>
+  </md-grid-tile>
+</md-grid-list>

@@ -13,11 +13,10 @@ const (
 	defaultPaginationLimit = "100" // this goes in a url and we don't want to cast an int.
 )
 
-// URL's for the various API calls.
 var (
 	secrets           *config
 	shopActiveListing = "shops/%d/listings/active" // Shop ID
-	ShopListing       = "shops/listing/%d"         // Listing ID
+	shopListing       = "shops/listing/%d"         // Listing ID
 )
 
 func urlBuilder(kind, limit, offset string, auth bool) (*url.URL, error) {

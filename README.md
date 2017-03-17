@@ -7,6 +7,8 @@ Backend:
 
 Frontend:
     UI for store.
+    Bring your own assets.
 
 Batch:
     Processing of etsy products for building and updating inventory.
+    Bring your own api credentials.

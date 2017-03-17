@@ -1,0 +1,10 @@
+@import '~@angular/material/core/theming/all-theme';
+
+@include mat-core();
+
+$entagle-primary: mat-palette($mat-blue-grey);
+$entagle-accent:  mat-palette($mat-light-blue, A200, A100, A400);
+$entagle-warn:    mat-palette($mat-red);
+$entagle-theme: mat-light-theme($entagle-primary, $entagle-accent, $entagle-warn);
+
+@include angular-material-theme($entagle-theme);
