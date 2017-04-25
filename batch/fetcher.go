@@ -65,7 +65,6 @@ func GetActiveListings() (*GetActiveListingResponse, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to build url: %s", err)
 	}
-	fmt.Printf("the path going in, %s\n", loc.Path)
 	req, err := http.NewRequest("GET", loc.String(), nil)
 	if err != nil {
 		return nil, err
@@ -76,35 +75,9 @@ func GetActiveListings() (*GetActiveListingResponse, error) {
 	}
 	defer resp.Body.Close()
 	var result *GetActiveListingResponse
-	// decode
-	// respBody, _ := ioutil.ReadAll(resp.Body)
-	// fmt.Print(string(respBody))
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, fmt.Errorf("failed to decode response: %s", err)
 	}
-
-	// paginate
-	// if result.Count > 100 {
-	// 	var wg sync.WaitGroup
-	// 	counter := result.Count
-	// 	for counter > 0 {
-	// 		wg.Add(1)
-	// 		go func(c int) {
-	// 			var tmp *GetActiveListingResponse
-	// 			turl, err := urlBuilder("GetActiveListings", defaultPaginationLimit, c, true)
-	// 			if err == nil {
-	// 				tr, err := etsyFetch(turl)
-	// 			}
-
-	// 			if err != nil {
-	// 				fmt.Printf("failed to fetch pagninated urls: %s", err)
-	// 			}
-	// 		}(strconv.Itoa(counter))
-	// 		counter = counter - defaultPaginationLimit
-	// 	}
-	// 	wg.Done()
-	// }
-
 	return result, nil
 }
 
@@ -113,10 +86,20 @@ func main() {
 	if secrets, err = getConfig("config.yaml"); err != nil {
 		log.Fatalf("failed to collect secrets: %s", err)
 	}
+	// if err = connect(); err != nil {
+	// 	log.Fatalf("failed to connect to database: %s", err)
+	// }
+	// if err = createTable(); err != nil {
+	// 	log.Fatalf("failed to create table: %s", err)
+	// }
+	//log.Println("successfully created table")
 	listings, err := GetActiveListings()
 	if err != nil {
 		fmt.Printf("failed to get active listings: %s\n", err)
 	} else {
 		fmt.Printf("the listings: %#v\n", listings)
 	}
+	// if err = writeListings(listings); err != nil {
+	// 	log.Fatalf("failed to write listings to database: %s", err)
+	// }
 }

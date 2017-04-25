@@ -1,0 +1,20 @@
+<md-card class="listing-card" *ngFor="let listing of listings">
+  <md-card-header>
+    <div md-card-avatar class="example-header-image"></div>
+    <md-card-title>{{ listing.title }}</md-card-title>
+    <md-card-subtitle>{{ listing.category_id }}</md-card-subtitle>
+  </md-card-header>
+  <img md-card-image src="assets/bullets.jpg">
+  <md-card-content>
+    <p>
+      {{ listing.description }}
+    </p>
+  </md-card-content>
+  <md-card-actions>
+    <button md-button [routerLink]=" ['detail/'] ">Details</button>
+    <button md-button>
+      {{ listing.user_id }}
+      <md-icon>add_shopping_cart</md-icon>
+    </button>
+  </md-card-actions>
+</md-card>

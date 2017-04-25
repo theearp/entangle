@@ -15,6 +15,13 @@ type config struct {
 		ShopID    int    `yaml:"shopID"`
 		UserPrefs string `yaml:"userPrefs"`
 	} `yaml:"api"`
+	
+	SQL struct {
+		Username string `yaml:"username"`
+		Password string `yaml:"password"`
+		Address  string `yaml:"address"`
+		DBName   string `yaml:"database_name"`
+	} `yaml:"sql"`
 }
 
 func getConfig(fileName string) (*config, error) {

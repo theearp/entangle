@@ -2,13 +2,16 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
-	"google.golang.org/appengine"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+
+	"time"
 
 	gmysql "github.com/go-sql-driver/mysql"
 )
@@ -33,13 +36,53 @@ func connect() error {
 	return db.Ping()
 }
 
-func createTable() error {
-	stmt := `CREATE TABLE IF NOT EXISTS gotest (
-          		timestamp  BIGINT,
-              userip     VARCHAR(255)
-          )`
-	_, err := db.Exec(stmt)
-	return err
+// HomeHandler serves a welcome.
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Welcome!")
+}
+
+// ProductsHandler serves all products from the database.
+func ProductsHandler(w http.ResponseWriter, r *http.Request) {
+	// Get a list of the most recent visits.
+	products, err := queryProducts()
+	if err != nil {
+		msg := fmt.Sprintf("Could not get products: %s", err)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+	log.Printf("fetched %d products", len(products))
+	if err := json.NewEncoder(w).Encode(products); err != nil {
+		http.Error(w, "failed to encode", http.StatusInternalServerError)
+		return
+	}
+}
+
+type product struct {
+	ListingID   int    `json:"listing_id"`
+	State       string `json:"state"`
+	UserID      int    `json:"user_id"`
+	CategoryID  int    `json:"category_id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
+
+func queryProducts() ([]product, error) {
+	t1 := time.Now()
+	rows, err := db.Query("SELECT listing_id,	state, user_id, category_id, title, description from etsy_ActiveListings")
+	if err != nil {
+		return nil, fmt.Errorf("failed to get products: %s", err)
+	}
+	defer rows.Close()
+	var products []product
+	for rows.Next() {
+		var p product
+		if err := rows.Scan(&p.ListingID, &p.State, &p.UserID, &p.CategoryID, &p.Title, &p.Description); err != nil {
+			return nil, fmt.Errorf("failed to get row: %s", err)
+		}
+		products = append(products, p)
+	}
+	log.Printf("Query took %v", time.Now().Sub(t1))
+	return products, rows.Err()
 }
 
 func main() {
@@ -51,69 +94,9 @@ func main() {
 		log.Fatalf("failed to connect: %s", err)
 	}
 	log.Println("db connected successfully.")
-	if err = createTable(); err != nil {
-		log.Fatalf("failed to create gotest table: %s", err)
-	}
-	log.Println("gotest table created successfully")
-	http.HandleFunc("/", handle)
-	appengine.Main()
-}
+	r := mux.NewRouter()
+	r.HandleFunc("/", HomeHandler)
+	r.HandleFunc("/products", ProductsHandler)
 
-func handle(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-
-	// Get a list of the most recent visits.
-	visits, err := queryVisits(10)
-	if err != nil {
-		msg := fmt.Sprintf("Could not get recent visits: %v", err)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-
-	// Record this visit.
-	if err := recordVisit(time.Now().UnixNano(), r.RemoteAddr); err != nil {
-		msg := fmt.Sprintf("Could not save visit: %v", err)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-
-	fmt.Fprintln(w, "Previous visits:")
-	for _, v := range visits {
-		fmt.Fprintf(w, "[%s] %s\n", time.Unix(0, v.timestamp), v.userIP)
-	}
-	fmt.Fprintln(w, "\nSuccessfully stored an entry of the current request.")
-}
-
-type visit struct {
-	timestamp int64
-	userIP    string
-}
-
-func recordVisit(timestamp int64, userIP string) error {
-	stmt := "INSERT INTO gotest (timestamp, userip) VALUES (?, ?)"
-	_, err := db.Exec(stmt, timestamp, userIP)
-	return err
-}
-
-func queryVisits(limit int64) ([]visit, error) {
-	rows, err := db.Query("SELECT timestamp, userip FROM gotest ORDER BY timestamp DESC LIMIT ?", limit)
-	if err != nil {
-		return nil, fmt.Errorf("Could not get recent visits: %v", err)
-	}
-	defer rows.Close()
-
-	var visits []visit
-
-	for rows.Next() {
-		var v visit
-		if err := rows.Scan(&v.timestamp, &v.userIP); err != nil {
-			return nil, fmt.Errorf("Could not get timestamp/user IP out of row: %v", err)
-		}
-		visits = append(visits, v)
-	}
-
-	return visits, rows.Err()
+	log.Fatal(http.ListenAndServe(":8181", handlers.CORS()(r)))
 }

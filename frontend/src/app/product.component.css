@@ -1,0 +1,13 @@
+.product-card {
+  float: left;
+  margin: .3em;
+  width: 20%;
+}
+
+footer {
+  width: 100%;
+}
+
+.productContainer {
+  display: flex;
+}
