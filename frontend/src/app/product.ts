@@ -14,4 +14,5 @@ export class Listing {
   category_id: number;
   title: string;
   description: string;
+  price: string;
 }

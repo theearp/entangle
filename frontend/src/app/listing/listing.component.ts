@@ -17,7 +17,7 @@ export class ListingComponent implements OnInit {
   ngOnInit() {
     this.ps.getListings()
     .subscribe(
-      listings => this.listings = listings,
+      data => this.listings = data,
       error => this.errorMessage = <any>error);
   }
 }

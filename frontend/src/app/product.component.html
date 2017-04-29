@@ -1,18 +1,3 @@
-<div class="searchContainer">
-  <md-toolbar>
-    <button md-button [mdMenuTriggerFor]="menu">Category</button>
-    <md-menu #menu="mdMenu">
-      <button md-menu-item>Bullets</button>
-      <button md-menu-item>Jewelry</button>
-      <button md-menu-item>Unique</button>
-    </md-menu>
-
-    <md-input-container>
-      <input type="search" mdInput placeholder="search">
-    </md-input-container>
-  </md-toolbar>
-</div>
-
 <div class="productContainer">
   <md-card class="product-card" *ngFor="let product of products">
     <md-card-header>

@@ -28,7 +28,10 @@ export class ProductDetailComponent implements OnInit {
   ngOnInit() {
     this.route.params
     .switchMap((params: Params) => this.ps.getProduct(params['id']))
-    .subscribe(data => this.product = data);
+    .subscribe(data => {
+      console.log(data);
+      this.product = data;
+    });
   }
 
   updateShoppingCart(product) {

@@ -64,33 +64,37 @@ export class ProductService {
 
   constructor(private http: Http) {}
 
-  getProducts(): Promise<Product[]> {
-    return Promise.resolve(PRODUCTS);
+  // getProducts returns an observable of static products above after a 1
+  // second delay.
+  getProducts(): Observable<Product[]> {
+    return new Observable(observer => {
+      setTimeout(() => {
+        observer.next(PRODUCTS);
+      }, 1000);
+       setTimeout(() => {
+        observer.complete();
+       }, 2000);
+    });
   };
 
-  getProduct(id: number) {
+  // getProduct fetchs a product by id from the static products above.
+  getProduct(id: number): Observable<Product> {
     let result: Product;
-    PRODUCTS.forEach(function(p, i) {
-      if (p.id == id) {
-        result = p;
-      }
-    })
-    if (result !== null){
-      return Promise.resolve(result);
-    } else {
-      return Promise.reject(id + ' id not found in DB');
-    }
+    return new Observable(observer => {
+      PRODUCTS.forEach(function(p, i) {
+        if (p.id == id) {
+          observer.next(p);
+        }
+      });
+      observer.complete();
+    });
   };
 
+  // getListings fetches listings from the GoApi -> CloudSQL data.
   getListings(): Observable<Listing[]> {
     return this.http.get('http://localhost:8181/products')
-     .map(this.extractData)
+     .map(response => <Listing[]> response.json())
      .catch(this.handleError);
-  }
-
-  private extractData(res: Response) {
-    let body = res.json();
-    return body.data || [];
   }
 
   private handleError (error: Response | any) {

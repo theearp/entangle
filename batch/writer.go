@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
 
@@ -57,7 +58,6 @@ func createTable() error {
 							language 							VARCHAR(255),
 							has_variations 				BOOLEAN,
 							taxonomy_id 					BIGINT
-
           )`
 	_, err := db.Exec(stmt)
 	return err
@@ -70,7 +70,9 @@ func writeListings(l *GetActiveListingResponse) error {
 			user_id, 							
 			category_id, 					
 			title, 								
-			description) VALUES (?,?,?,?,?,?)`
+			description,
+			price,
+			views) VALUES (?,?,?,?,?,?,?,?)`
 	for _, listing := range l.Results {
 		_, err := db.Exec(stmt,
 			listing.ListingID,
@@ -78,8 +80,12 @@ func writeListings(l *GetActiveListingResponse) error {
 			listing.UserID,
 			listing.CategoryID,
 			listing.Title,
-			listing.Description)
-		return err
+			listing.Description,
+			listing.Price,
+			listing.Views)
+		if err != nil {
+			log.Printf("failed to write stmt: %s", stmt)
+		}
 	}
 	return nil
 }

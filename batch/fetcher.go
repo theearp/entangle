@@ -86,9 +86,9 @@ func main() {
 	if secrets, err = getConfig("config.yaml"); err != nil {
 		log.Fatalf("failed to collect secrets: %s", err)
 	}
-	// if err = connect(); err != nil {
-	// 	log.Fatalf("failed to connect to database: %s", err)
-	// }
+	if err = connect(); err != nil {
+		log.Fatalf("failed to connect to database: %s", err)
+	}
 	// if err = createTable(); err != nil {
 	// 	log.Fatalf("failed to create table: %s", err)
 	// }
@@ -99,7 +99,7 @@ func main() {
 	} else {
 		fmt.Printf("the listings: %#v\n", listings)
 	}
-	// if err = writeListings(listings); err != nil {
-	// 	log.Fatalf("failed to write listings to database: %s", err)
-	// }
+	if err = writeListings(listings); err != nil {
+		log.Fatalf("failed to write listings to database: %s", err)
+	}
 }

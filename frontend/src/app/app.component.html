@@ -1,6 +1,5 @@
 <md-toolbar>
   <span>Country Lead Works</span>
-
   
   <!-- This fills the remaining space of the current row -->
   <span class="fill-remaining-space"></span>
@@ -16,17 +15,33 @@
   </button>
 </md-toolbar>
 
-<md-grid-list cols="4" rowHeight="50px">
+<!--<md-grid-list cols="4" rowHeight="50px">
   <md-grid-tile
       [colspan]="4"
       [rowspan]="4">
     <div class="defaultBar"></div>
   </md-grid-tile>
-</md-grid-list>
+</md-grid-list>-->
 
-<router-outlet></router-outlet>
+<div class="searchContainer">
+  <md-toolbar>
+    <button md-button [mdMenuTriggerFor]="menu">Category</button>
+    <md-menu #menu="mdMenu">
+      <button md-menu-item>Bullets</button>
+      <button md-menu-item>Jewelry</button>
+      <button md-menu-item>Unique</button>
+    </md-menu>
 
-<ul class="footerLinks">
-  <li>&copy; 2017</li>
-  <li>Country Lead Works</li>
-</ul>
+    <md-input-container>
+      <input type="search" mdInput placeholder="search">
+    </md-input-container>
+  </md-toolbar>
+</div>
+
+<main class="routerContainer">
+  <router-outlet></router-outlet>
+</main>
+
+<footer>
+  <p>&copy; Country Lead Works</p>
+</footer>

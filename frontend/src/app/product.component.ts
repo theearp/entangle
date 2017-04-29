@@ -20,7 +20,7 @@ export class ProductComponent implements OnInit {
   
   ngOnInit() {
     this.ps.getProducts()
-    .then(data => {this.products = data})
+    .subscribe(data => this.products = data)
   }
 
   updateShoppingCart(product: Product) {
