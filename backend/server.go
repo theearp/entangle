@@ -57,7 +57,7 @@ func ProductsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Popular handler serves the 10 most popular product by views.
+// PopularHandler serves the 10 most popular product by views.
 func PopularHandler(w http.ResponseWriter, r *http.Request) {
 	// Get a list of the most recent visits.
 	products, err := queryPopular()
