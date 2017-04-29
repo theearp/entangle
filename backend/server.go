@@ -46,7 +46,22 @@ func ProductsHandler(w http.ResponseWriter, r *http.Request) {
 	// Get a list of the most recent visits.
 	products, err := queryProducts()
 	if err != nil {
-		msg := fmt.Sprintf("Could not get products: %s", err)
+		msg := fmt.Sprintf("Could not get all products: %s", err)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+	log.Printf("fetched %d products", len(products))
+	if err := json.NewEncoder(w).Encode(products); err != nil {
+		http.Error(w, "failed to encode", http.StatusInternalServerError)
+		return
+	}
+}
+
+func PopularHandler(w http.ResponseWriter, r *http.Request) {
+	// Get a list of the most recent visits.
+	products, err := queryPopular()
+	if err != nil {
+		msg := fmt.Sprintf("Could not get popular products: %s", err)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -64,11 +79,13 @@ type product struct {
 	CategoryID  int    `json:"category_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
+	Price       string `json:"price"`
+	Views       int64  `json:"views"`
 }
 
 func queryProducts() ([]product, error) {
 	t1 := time.Now()
-	rows, err := db.Query("SELECT listing_id,	state, user_id, category_id, title, description from etsy_ActiveListings")
+	rows, err := db.Query("SELECT listing_id,	state, user_id, category_id, title, description, price, views from etsy_ActiveListings")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get products: %s", err)
 	}
@@ -76,7 +93,26 @@ func queryProducts() ([]product, error) {
 	var products []product
 	for rows.Next() {
 		var p product
-		if err := rows.Scan(&p.ListingID, &p.State, &p.UserID, &p.CategoryID, &p.Title, &p.Description); err != nil {
+		if err := rows.Scan(&p.ListingID, &p.State, &p.UserID, &p.CategoryID, &p.Title, &p.Description, &p.Price, &p.Views); err != nil {
+			return nil, fmt.Errorf("failed to get row: %s", err)
+		}
+		products = append(products, p)
+	}
+	log.Printf("Query took %v", time.Now().Sub(t1))
+	return products, rows.Err()
+}
+
+func queryPopular() ([]product, error) {
+	t1 := time.Now()
+	rows, err := db.Query("SELECT listing_id,	state, user_id, category_id, title, description, price, views from etsy_ActiveListings order by views desc limit 10")
+	if err != nil {
+		return nil, fmt.Errorf("failed to get products: %s", err)
+	}
+	defer rows.Close()
+	var products []product
+	for rows.Next() {
+		var p product
+		if err := rows.Scan(&p.ListingID, &p.State, &p.UserID, &p.CategoryID, &p.Title, &p.Description, &p.Price, &p.Views); err != nil {
 			return nil, fmt.Errorf("failed to get row: %s", err)
 		}
 		products = append(products, p)
@@ -97,6 +133,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", HomeHandler)
 	r.HandleFunc("/products", ProductsHandler)
+	r.HandleFunc("/popular", PopularHandler)
 
 	log.Fatal(http.ListenAndServe(":8181", handlers.CORS()(r)))
 }

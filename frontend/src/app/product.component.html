@@ -1,24 +1,20 @@
 <div class="productContainer">
-  <md-card class="product-card" *ngFor="let product of products">
+  <md-card class="product-card" *ngFor="let listing of listings">
     <md-card-header>
       <div md-card-avatar class="example-header-image"></div>
-      <md-card-title>{{ product.name}}</md-card-title>
-      <md-card-subtitle>{{ product.category }}</md-card-subtitle>
+      <md-card-title>{{ listing.title }}</md-card-title>
+      <md-card-subtitle>{{ listing.category_id }}</md-card-subtitle>
     </md-card-header>
     <img md-card-image src="assets/bullets.jpg">
     <md-card-content>
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-        Id mihi magnum videtur. A primo, ut opinor, animantium ortu petitur origo summi boni. 
-        Duo Reges: constructio interrete. Stoicos roga. Quae cum magnifice primo dici viderentur, considerata minus probabantur. 
-        Hoc unum Aristo tenuit: praeter vitia atque virtutes negavit rem esse ullam aut fugiendam aut expetendam. 
-        Quid igitur dubitamus in tota eius natura quaerere quid sit effectum? Duo enim genera quae erant, fecit tria.
+        {{ listing.description }}
       </p>
     </md-card-content>
     <md-card-actions>
-      <button md-button [routerLink]=" ['detail/', product.id] ">Details</button>
-      <button md-button (click)="updateShoppingCart(product)">
-        {{ product.price }}
+      <button md-button [routerLink]=" ['detail/', listing.listing_id] ">Details</button>
+      <button md-button (click)="updateShoppingCart(listing)">
+        {{ listing.price }}
         <md-icon>add_shopping_cart</md-icon>
       </button>
     </md-card-actions>

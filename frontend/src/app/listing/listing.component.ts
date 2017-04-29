@@ -15,9 +15,12 @@ export class ListingComponent implements OnInit {
   constructor(private ps: ProductService) { }
 
   ngOnInit() {
-    this.ps.getListings()
+    this.ps.getPopularListings()
     .subscribe(
       data => this.listings = data,
-      error => this.errorMessage = <any>error);
+      error => {
+        console.log(error);
+        this.errorMessage = <any>error;
+      });
   }
 }

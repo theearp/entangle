@@ -61,6 +61,9 @@ export const PRODUCTS: Product[] = [
 
 @Injectable()
 export class ProductService {
+  baseUrl = 'http://localhost:8181/';
+  allProducts = this.baseUrl + 'products';
+  popularProducts = this.baseUrl + 'popular';
 
   constructor(private http: Http) {}
 
@@ -91,9 +94,15 @@ export class ProductService {
 
   // getListings fetches listings from the GoApi -> CloudSQL data.
   getListings(): Observable<Listing[]> {
-    return this.http.get('http://localhost:8181/products')
+    return this.http.get(this.allProducts)
      .map(response => <Listing[]> response.json())
      .catch(this.handleError);
+  }
+
+  getPopularListings(): Observable<Listing[]> {
+    return this.http.get(this.popularProducts)
+    .map(response => <Listing[]> response.json())
+    .catch(this.handleError);
   }
 
   private handleError (error: Response | any) {

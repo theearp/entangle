@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Product } from './Product';
+import { Listing } from './Product';
 
 @Injectable()
 export class ShoppingService {
@@ -10,7 +10,7 @@ export class ShoppingService {
     this.cartItems = [];
   }
 
-  addItemToCart(p: Product) {
+  addItemToCart(p: Listing) {
     this.cartItems.push(p);
   }
 }

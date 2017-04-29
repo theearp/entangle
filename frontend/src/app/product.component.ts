@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Product } from './product';
+import { Listing } from './product';
 import { ProductService } from './product.service';
 import { ShoppingService } from './shopping.service';
 
@@ -11,7 +11,7 @@ import { ShoppingService } from './shopping.service';
   providers: [ProductService]
 })
 export class ProductComponent implements OnInit {
-  products: Product[];
+  listings: Listing[];
   constructor(
     private ps: ProductService, 
     private ss: ShoppingService
@@ -19,12 +19,12 @@ export class ProductComponent implements OnInit {
   }
   
   ngOnInit() {
-    this.ps.getProducts()
-    .subscribe(data => this.products = data)
+    this.ps.getPopularListings()
+    .subscribe(data => this.listings = data)
   }
 
-  updateShoppingCart(product: Product) {
-    this.ss.addItemToCart(product);
-    console.log(product);
+  updateShoppingCart(listing: Listing) {
+    this.ss.addItemToCart(listing);
+    console.log(listing);
   }
 }

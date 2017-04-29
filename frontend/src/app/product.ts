@@ -15,4 +15,5 @@ export class Listing {
   title: string;
   description: string;
   price: string;
+  views: number;
 }
