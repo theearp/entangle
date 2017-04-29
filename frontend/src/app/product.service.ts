@@ -79,7 +79,6 @@ export class ProductService {
 
   // getProduct fetchs a product by id from the static products above.
   getProduct(id: number): Observable<Product> {
-    let result: Product;
     return new Observable(observer => {
       PRODUCTS.forEach(function(p, i) {
         if (p.id == id) {
