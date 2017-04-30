@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ProductService } from '../product.service';
-import { Listing } from '../product';
+import { ProductService } from '../shared/services/product.service';
+import { Product } from '../shared/models/product';
 
 @Component({
   selector: 'listing',

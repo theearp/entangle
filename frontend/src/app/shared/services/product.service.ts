@@ -5,9 +5,9 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
-import { Product, Listing } from './product';
+import { Product, FakeProduct } from '../models/product';
 
-export const PRODUCTS: Product[] = [
+export const PRODUCTS: FakeProduct[] = [
   {
     id: 1234, 
     name: 'Safe Snap Bullets', 
@@ -69,7 +69,7 @@ export class ProductService {
 
   // getProducts returns an observable of static products above after a 1
   // second delay.
-  getProducts(): Observable<Product[]> {
+  getFakeProducts(): Observable<Product[]> {
     return new Observable(observer => {
       setTimeout(() => {
         observer.next(PRODUCTS);
@@ -81,7 +81,7 @@ export class ProductService {
   };
 
   // getProduct fetchs a product by id from the static products above.
-  getProduct(id: number): Observable<Product> {
+  getFakeProduct(id: number): Observable<Product> {
     return new Observable(observer => {
       PRODUCTS.forEach(function(p, i) {
         if (p.id == id) {
@@ -92,17 +92,22 @@ export class ProductService {
     });
   };
 
-  // getListings fetches listings from the GoApi -> CloudSQL data.
-  getListings(): Observable<Listing[]> {
+  // getProducts fetches product from the GoApi -> CloudSQL data.
+  getProducts(): Observable<Product[]> {
     return this.http.get(this.allProducts)
-     .map(response => <Listing[]> response.json())
+     .map(response => <Product[]> response.json())
      .catch(this.handleError);
   }
 
-  getPopularListings(): Observable<Listing[]> {
+  getPopularProducts(): Observable<Product[]> {
     return this.http.get(this.popularProducts)
-    .map(response => <Listing[]> response.json())
+    .map(response => <Product[]> response.json())
     .catch(this.handleError);
+  }
+
+  getProduct(id): Observable<Product> {
+    console.log('not implmeneted');
+    return this.getFakeProduct(id);
   }
 
   private handleError (error: Response | any) {

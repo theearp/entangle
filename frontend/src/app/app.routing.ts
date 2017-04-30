@@ -1,15 +1,15 @@
 import { NgModule }             from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { ProductComponent } from './product.component';
-import { ProductDetailComponent } from './productDetail.component';
-import { ListingComponent } from './listing/listing.component';
+import { ProductComponent } from './product/product.component';
+import { ProductDetailComponent } from './product/productDetail.component';
+import { PopularProductsComponent } from './product/popular.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/', pathMatch: 'full' },
   { path: 'product', component: ProductComponent},
-  { path: 'product/detail/:id', component: ProductDetailComponent},
-  { path: 'listings', component: ListingComponent}
+  { path: 'product/details/:id', component: ProductDetailComponent},
+  { path: 'popular', component: PopularProductsComponent }
 ];
 @NgModule({
   imports: [ RouterModule.forRoot(routes) ],

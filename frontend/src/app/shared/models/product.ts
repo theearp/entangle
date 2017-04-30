@@ -1,13 +1,4 @@
 export class Product {
-  id: number;
-  name: string;
-  img: string;
-  category: string;
-  description: string;
-  price: string;
-}
-
-export class Listing {
   listing_id: number;
   state: string;
   user_id: number;
@@ -16,4 +7,13 @@ export class Listing {
   description: string;
   price: string;
   views: number;
+}
+
+export class FakeProduct {
+  id: number;
+  name: string;
+  img: string;
+  category: string;
+  description: string;
+  price: string;
 }

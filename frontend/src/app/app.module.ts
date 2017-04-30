@@ -9,17 +9,19 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 import { AppComponent } from './app.component';
-import { ProductComponent } from './product.component';
-import { ProductDetailComponent } from './productDetail.component';
-import { ShoppingService } from './shopping.service';
-import { ListingComponent } from './listing/listing.component';
+import { ProductComponent } from './product/product.component';
+import { ProductDetailComponent } from './product/productDetail.component';
+import { PopularProductsComponent } from './product/popular.component';
+import { ShoppingService } from './shared/services/shopping.service';
+import { SharedComponent } from './shared/shared.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ProductComponent,
     ProductDetailComponent,
-    ListingComponent
+    PopularProductsComponent,
+    SharedComponent
   ],
   imports: [
     BrowserModule,

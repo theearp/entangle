@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Params }   from '@angular/router';
 import { Location }                 from '@angular/common';
-import { ProductService } from './product.service';
-import { ShoppingService } from './shopping.service';
-import { Product } from './product';
+import { ProductService } from '../shared/services/product.service';
+import { ShoppingService } from '../shared/services/shopping.service';
+import { Product } from '../shared/models/product';
 
 import 'rxjs/add/operator/switchMap';
 
@@ -16,6 +16,7 @@ import 'rxjs/add/operator/switchMap';
 export class ProductDetailComponent implements OnInit {
   @Input()
   id: number;
+  @Input()
   product: Product;
 
   constructor(
@@ -26,12 +27,14 @@ export class ProductDetailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.params
-    .switchMap((params: Params) => this.ps.getProduct(params['id']))
-    .subscribe(data => {
-      console.log(data);
-      this.product = data;
-    });
+    if (this.product === null) {
+      this.route.params
+        .switchMap((params: Params) => this.ps.getProduct(params['id']))
+        .subscribe(data => {
+          console.log(data);
+          this.product = data;
+        });
+    }
   }
 
   updateShoppingCart(product) {
