@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-
-	gmysql "github.com/go-sql-driver/mysql"
 )
 
 var (
@@ -20,16 +20,20 @@ var (
 	dbName  = "playground"
 )
 
-func connect() error {
-	var err error
-	cfg := &gmysql.Config{
-		Addr:   secrets.SQL.Address,
-		User:   secrets.SQL.Username,
-		Passwd: secrets.SQL.Password,
-		DBName: secrets.SQL.DBName,
+func connect(env string) error {
+	cfg, err := secrets.env(env)
+	if err != nil {
+		return fmt.Errorf("failed to collect secrets: %s", err)
 	}
-	if db, err = mysql.DialCfg(cfg); err != nil {
-		return fmt.Errorf("failed to connect to db: %s", err)
+
+	if env == "local" {
+		if db, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", cfg.User, cfg.Passwd, cfg.Addr, cfg.DBName)); err != nil {
+			return fmt.Errorf("failed to connect to db: %s", err)
+		}
+	} else {
+		if db, err = mysql.DialCfg(cfg); err != nil {
+			return fmt.Errorf("failed to connect to db: %s", err)
+		}
 	}
 	return db.Ping()
 }
@@ -71,12 +75,32 @@ func PopularHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ProductHandler serves a single product given its listing id.
+func ProductHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	sid := vars["id"]
+	id, err := strconv.Atoi(sid)
+	if err != nil {
+		http.Error(w, "failed to convert listing id string to int", http.StatusInternalServerError)
+		return
+	}
+	product, err := queryProduct(id)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to retrieve product: %d", id), http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(product); err != nil {
+		http.Error(w, "failed to encode", http.StatusInternalServerError)
+		return
+	}
+}
+
 func main() {
 	var err error
-	if secrets, err = getConfig("config.yaml"); err != nil {
+	if secrets, err = getSQLConfig("config.yaml"); err != nil {
 		log.Fatalf("failed to get secrets: %s", err)
 	}
-	if err = connect(); err != nil {
+	if err = connect("local"); err != nil {
 		log.Fatalf("failed to connect: %s", err)
 	}
 	log.Println("db connected successfully.")
@@ -84,6 +108,7 @@ func main() {
 	r.HandleFunc("/", HomeHandler)
 	r.HandleFunc("/products", ProductsHandler)
 	r.HandleFunc("/popular", PopularHandler)
+	r.HandleFunc("/product/{id}", ProductHandler)
 
 	log.Fatal(http.ListenAndServe(":8181", handlers.CORS()(r)))
 }

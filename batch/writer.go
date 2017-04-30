@@ -6,25 +6,29 @@ import (
 	"log"
 
 	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
-
-	gmysql "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
 	db *sql.DB
 )
 
-func connect() error {
-	var err error
-	cfg := &gmysql.Config{
-		Addr:   secrets.SQL.Address,
-		User:   secrets.SQL.Username,
-		Passwd: secrets.SQL.Password,
-		DBName: secrets.SQL.DBName,
+func connect(env string) error {
+	cfg, err := secrets.env(env)
+	if err != nil {
+		return fmt.Errorf("failed to collect secrets: %s", err)
 	}
-	if db, err = mysql.DialCfg(cfg); err != nil {
-		return fmt.Errorf("failed to connect to db: %s", err)
+
+	if env == "local" {
+		if db, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", cfg.User, cfg.Passwd, cfg.Addr, cfg.DBName)); err != nil {
+			return fmt.Errorf("failed to connect to db: %s", err)
+		}
+	} else {
+		if db, err = mysql.DialCfg(cfg); err != nil {
+			return fmt.Errorf("failed to connect to db: %s", err)
+		}
 	}
+
 	return db.Ping()
 }
 

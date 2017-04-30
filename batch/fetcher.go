@@ -86,13 +86,13 @@ func main() {
 	if secrets, err = getConfig("config.yaml"); err != nil {
 		log.Fatalf("failed to collect secrets: %s", err)
 	}
-	if err = connect(); err != nil {
+	if err = connect("local"); err != nil {
 		log.Fatalf("failed to connect to database: %s", err)
 	}
-	// if err = createTable(); err != nil {
-	// 	log.Fatalf("failed to create table: %s", err)
-	// }
-	//log.Println("successfully created table")
+	if err = createTable(); err != nil {
+		log.Fatalf("failed to create table: %s", err)
+	}
+	log.Println("successfully created table")
 	listings, err := GetActiveListings()
 	if err != nil {
 		fmt.Printf("failed to get active listings: %s\n", err)

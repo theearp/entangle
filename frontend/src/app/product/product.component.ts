@@ -12,7 +12,6 @@ import { ShoppingService } from '../shared/services/shopping.service';
 })
 export class ProductComponent implements OnInit {
   products: Product[];
-  selectedProduct: Product;
   constructor(
     private ps: ProductService, 
     private ss: ShoppingService
@@ -27,9 +26,5 @@ export class ProductComponent implements OnInit {
   updateShoppingCart(product: Product) {
     this.ss.addItemToCart(product);
     console.log(product);
-  }
-
-  showDetails(product: Product) {
-    this.selectedProduct = product;
   }
 }

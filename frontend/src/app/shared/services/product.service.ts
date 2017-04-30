@@ -64,6 +64,7 @@ export class ProductService {
   baseUrl = 'http://localhost:8181/';
   allProducts = this.baseUrl + 'products';
   popularProducts = this.baseUrl + 'popular';
+  productByID = this.baseUrl + 'product'
 
   constructor(private http: Http) {}
 
@@ -106,8 +107,9 @@ export class ProductService {
   }
 
   getProduct(id): Observable<Product> {
-    console.log('not implmeneted');
-    return this.getFakeProduct(id);
+    return this.http.get(this.productByID + '/' + id)
+      .map(response => <Product> response.json())
+      .catch(this.handleError)
   }
 
   private handleError (error: Response | any) {

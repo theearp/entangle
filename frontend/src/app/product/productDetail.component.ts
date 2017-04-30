@@ -16,7 +16,6 @@ import 'rxjs/add/operator/switchMap';
 export class ProductDetailComponent implements OnInit {
   @Input()
   id: number;
-  @Input()
   product: Product;
 
   constructor(
@@ -27,14 +26,12 @@ export class ProductDetailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.product === null) {
-      this.route.params
-        .switchMap((params: Params) => this.ps.getProduct(params['id']))
-        .subscribe(data => {
-          console.log(data);
-          this.product = data;
-        });
-    }
+    this.route.params
+      .switchMap((params: Params) => this.ps.getProduct(params['id']))
+      .subscribe(data => {
+        console.log(data);
+        this.product = data;
+      });
   }
 
   updateShoppingCart(product) {
