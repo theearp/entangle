@@ -36,7 +36,6 @@ type Listing struct {
 }
 
 // GetActiveListingResponse is the etsy response for active listings.
-// Refactor, we don't need all of this.
 type GetActiveListingResponse struct {
 	Count   int       `json:"count"`
 	Results []Listing `json:"results"`
@@ -63,4 +62,33 @@ type GetActiveListingResponse struct {
 // Fields returns the string version of the struct fields
 func (r *GetActiveListingResponse) Fields() []string {
 	return structs.Names(&Listing{})
+}
+
+// Category represents a category.
+type Category struct {
+	CategoryID      int    `json:"category_id"`
+	Name            string `json:"name"`
+	MetaTitle       string `json:"meta_title"`
+	MetaKeywords    string `json:"meta_keywords"`
+	MetaDescription string `json:"meta_description"`
+	PageDescription string `json:"page_description"`
+	PageTitle       string `json:"page_title"`
+	CategoryName    string `json:"category_name"`
+	ShortName       string `json:"short_name"`
+	LongName        string `json:"long_name"`
+	NumChildren     int    `json:"num_children"`
+}
+
+// GetCategoriesResponse represents the response from esty/v2/taxonomy/categories.
+type GetCategoriesResponse struct {
+	Count      int        `json:"count"`
+	Results    []Category `json:"results"`
+	Type       string     `json:"type"`
+	Pagination struct {
+		EffectiveLimit  int `json:"effective_limit"`
+		EffectiveOffset int `json:"effective_offset"`
+		NextOffset      int `json:"next_offset"`
+		EffectivePage   int `json:"effective_page"`
+		NextPage        int `json:"next_page"`
+	} `json:"pagination"`
 }

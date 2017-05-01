@@ -17,6 +17,7 @@ var (
 	secrets           *config
 	shopActiveListing = "shops/%d/listings/active" // Shop ID
 	shopListing       = "shops/listing/%d"         // Listing ID
+	category          = "taxonomy/categories"
 )
 
 func urlBuilder(kind, limit, offset string, auth bool) (*url.URL, error) {
@@ -38,6 +39,8 @@ func urlBuilder(kind, limit, offset string, auth bool) (*url.URL, error) {
 	switch kind {
 	case "GetActiveListings":
 		u.Path = fmt.Sprintf("%s/%s", u.Path, fmt.Sprintf(shopActiveListing, secrets.API.ShopID))
+	case "GetCategories":
+		u.Path = fmt.Sprintf("%s/%s", u.Path, category)
 	default:
 		return nil, fmt.Errorf("kind %q does not match available methods", kind)
 	}
@@ -81,6 +84,28 @@ func GetActiveListings() (*GetActiveListingResponse, error) {
 	return result, nil
 }
 
+// GetCategories get the top level categories from etsy.
+func GetCategories() (*GetCategoriesResponse, error) {
+	loc, err := urlBuilder("GetCategories", "", "0", true)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build url: %s", err)
+	}
+	req, err := http.NewRequest("GET", loc.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := etsyFetch(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to etsyFetch: %s", err)
+	}
+	defer resp.Body.Close()
+	var result *GetCategoriesResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to decode response: %s", err)
+	}
+	return result, nil
+}
+
 func main() {
 	var err error
 	if secrets, err = getConfig("config.yaml"); err != nil {
@@ -89,17 +114,29 @@ func main() {
 	if err = connect("local"); err != nil {
 		log.Fatalf("failed to connect to database: %s", err)
 	}
-	if err = createTable(); err != nil {
+	// if err = createListingTable(); err != nil {
+	// 	log.Fatalf("failed to create table: %s", err)
+	// }
+	if err = createCategoryTable(); err != nil {
 		log.Fatalf("failed to create table: %s", err)
 	}
 	log.Println("successfully created table")
-	listings, err := GetActiveListings()
+	// listings, err := GetActiveListings()
+	// if err != nil {
+	// 	fmt.Printf("failed to get active listings: %s\n", err)
+	// } else {
+	// 	fmt.Printf("the listings: %#v\n", listings)
+	// }
+	// if err = writeListings(listings); err != nil {
+	// 	log.Fatalf("failed to write listings to database: %s", err)
+	// }
+	categories, err := GetCategories()
 	if err != nil {
-		fmt.Printf("failed to get active listings: %s\n", err)
+		fmt.Printf("failed to get categories: %s\n", err)
 	} else {
-		fmt.Printf("the listings: %#v\n", listings)
+		fmt.Printf("the categories: %#v\n", categories)
 	}
-	if err = writeListings(listings); err != nil {
-		log.Fatalf("failed to write listings to database: %s", err)
+	if err = writeCategories(categories); err != nil {
+		log.Fatalf("failed to write categories to database: %s", err)
 	}
 }

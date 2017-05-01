@@ -32,8 +32,26 @@ func connect(env string) error {
 	return db.Ping()
 }
 
-func createTable() error {
-	stmt := `CREATE TABLE etsy_ActiveListings (
+func createCategoryTable() error {
+	stmt := `CREATE TABLE IF NOT EXISTS etsy_Categories (
+							category_id				BIGINT,		
+							name				    	VARCHAR(255),
+							meta_title				VARCHAR(255),
+							meta_keywords			VARCHAR(255),
+							meta_description	VARCHAR(255),
+							page_description	VARCHAR(255),
+							page_title				VARCHAR(255),
+							category_name			VARCHAR(255),
+							short_name				VARCHAR(255),
+							long_name					VARCHAR(255),
+							num_children			BIGINT	
+		)`
+	_, err := db.Exec(stmt)
+	return err
+}
+
+func createListingTable() error {
+	stmt := `CREATE TABLE IF NOT EXISTS etsy_ActiveListings (
           		listing_id						BIGINT,
               state     						VARCHAR(255),
 							user_id 							BIGINT,
@@ -87,6 +105,39 @@ func writeListings(l *GetActiveListingResponse) error {
 			listing.Description,
 			listing.Price,
 			listing.Views)
+		if err != nil {
+			log.Printf("failed to write stmt: %s", stmt)
+		}
+	}
+	return nil
+}
+
+func writeCategories(c *GetCategoriesResponse) error {
+	stmt := `INSERT INTO etsy_Categories (
+			category_id,			
+			name,				    
+			meta_title,			
+			meta_keywords,		
+			meta_description,
+			page_description,
+			page_title,			
+			category_name,		
+			short_name,			
+			long_name,				
+			num_children) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+	for _, category := range c.Results {
+		_, err := db.Exec(stmt,
+			category.CategoryID,
+			category.Name,
+			category.MetaTitle,
+			category.MetaKeywords,
+			category.MetaDescription,
+			category.PageDescription,
+			category.PageTitle,
+			category.CategoryName,
+			category.ShortName,
+			category.LongName,
+			category.NumChildren)
 		if err != nil {
 			log.Printf("failed to write stmt: %s", stmt)
 		}

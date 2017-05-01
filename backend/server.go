@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
 	_ "github.com/go-sql-driver/mysql"
@@ -14,69 +15,89 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var (
-	secrets *config
-	db      *sql.DB
-	dbName  = "playground"
-)
+// Entangle represents the Entangle API service.
+type Entangle struct {
+	Config string
+	DB     *sql.DB
+	Router *mux.Router
+}
 
-func connect(env string) error {
+func (e *Entangle) startUp(env string) error {
+	e.resgisterRoutes()
+	secrets, err := getSQLConfig(e.Config)
+	if err != nil {
+		return fmt.Errorf("failed to get secrets: %s", err)
+	}
 	cfg, err := secrets.env(env)
 	if err != nil {
 		return fmt.Errorf("failed to collect secrets: %s", err)
 	}
 
+	log.Println("connecting to database....")
 	if env == "local" {
-		if db, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", cfg.User, cfg.Passwd, cfg.Addr, cfg.DBName)); err != nil {
+		if e.DB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", cfg.User, cfg.Passwd, cfg.Addr, cfg.DBName)); err != nil {
 			return fmt.Errorf("failed to connect to db: %s", err)
 		}
 	} else {
-		if db, err = mysql.DialCfg(cfg); err != nil {
+		if e.DB, err = mysql.DialCfg(cfg); err != nil {
 			return fmt.Errorf("failed to connect to db: %s", err)
 		}
 	}
-	return db.Ping()
+	return e.DB.Ping()
 }
 
-// HomeHandler serves a welcome.
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Welcome!")
+func (e *Entangle) resgisterRoutes() {
+	e.Router = mux.NewRouter()
+	e.Router.HandleFunc("/", e.home).Methods("GET")
+	e.Router.HandleFunc("/products", e.products).Methods("GET")
+	e.Router.HandleFunc("/popular", e.popularProducts).Methods("GET")
+	e.Router.HandleFunc("/product/{id}", e.product).Methods("GET")
+	e.Router.HandleFunc("/categories", e.categories).Methods("GET")
+	e.Router.HandleFunc("/product_category/{id}", e.productCategory).Methods("GET")
 }
 
-// ProductsHandler serves all products from the database.
-func ProductsHandler(w http.ResponseWriter, r *http.Request) {
-	// Get a list of the most recent visits.
-	products, err := queryProducts()
+func (e *Entangle) run(addr string) {
+	log.Println("Serving API")
+	log.Fatal(http.ListenAndServe(addr, handlers.CORS()(e.Router)))
+}
+
+func (e *Entangle) home(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Nothing here")
+}
+
+func (e *Entangle) products(w http.ResponseWriter, r *http.Request) {
+	t1 := time.Now()
+	products, err := queryProducts(e.DB, "")
 	if err != nil {
 		msg := fmt.Sprintf("Could not get all products: %s", err)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	log.Printf("fetched %d products", len(products))
-	if err := json.NewEncoder(w).Encode(products); err != nil {
+	if err := renderJSON(w, products); err != nil {
 		http.Error(w, "failed to encode", http.StatusInternalServerError)
 		return
 	}
+	log.Printf("%d /products returned successfully in %v", len(products), time.Now().Sub(t1))
 }
 
-// PopularHandler serves the 10 most popular product by views.
-func PopularHandler(w http.ResponseWriter, r *http.Request) {
+func (e *Entangle) popularProducts(w http.ResponseWriter, r *http.Request) {
+	t1 := time.Now()
 	// Get a list of the most recent visits.
-	products, err := queryPopular()
+	products, err := queryPopular(e.DB)
 	if err != nil {
 		msg := fmt.Sprintf("Could not get popular products: %s", err)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	log.Printf("fetched %d products", len(products))
-	if err := json.NewEncoder(w).Encode(products); err != nil {
+	if err := renderJSON(w, products); err != nil {
 		http.Error(w, "failed to encode", http.StatusInternalServerError)
 		return
 	}
+	log.Printf("%d /popular returned successfully in %v", len(products), time.Now().Sub(t1))
 }
 
-// ProductHandler serves a single product given its listing id.
-func ProductHandler(w http.ResponseWriter, r *http.Request) {
+func (e *Entangle) product(w http.ResponseWriter, r *http.Request) {
+	t1 := time.Now()
 	vars := mux.Vars(r)
 	sid := vars["id"]
 	id, err := strconv.Atoi(sid)
@@ -84,31 +105,56 @@ func ProductHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to convert listing id string to int", http.StatusInternalServerError)
 		return
 	}
-	product, err := queryProduct(id)
+	product, err := queryProduct(e.DB, id)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to retrieve product: %d", id), http.StatusInternalServerError)
 		return
 	}
-	if err := json.NewEncoder(w).Encode(product); err != nil {
+	if err := renderJSON(w, product); err != nil {
 		http.Error(w, "failed to encode", http.StatusInternalServerError)
 		return
 	}
+	log.Printf("/product/%d returned successfully in %v", id, time.Now().Sub(t1))
+}
+
+func (e *Entangle) categories(w http.ResponseWriter, r *http.Request) {
+	t1 := time.Now()
+	cs, err := queryCategories(e.DB)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("could not get categories: %s", err), http.StatusInternalServerError)
+		return
+	}
+	if err := renderJSON(w, cs); err != nil {
+		http.Error(w, "failed to encode", http.StatusInternalServerError)
+		return
+	}
+	log.Printf("%d /categories returned successfully in %v", len(cs), time.Now().Sub(t1))
+}
+
+func (e *Entangle) productCategory(w http.ResponseWriter, r *http.Request) {
+	t1 := time.Now()
+	vars := mux.Vars(r)
+	products, err := queryProducts(e.DB, vars["id"])
+	if err != nil {
+		http.Error(w, fmt.Sprintf("could not get products: %s", err), http.StatusInternalServerError)
+		return
+	}
+	if err := renderJSON(w, products); err != nil {
+		http.Error(w, "failed to encode", http.StatusInternalServerError)
+		return
+	}
+	log.Printf("%d /products returned successfully in %v", len(products), time.Now().Sub(t1))
+}
+
+func renderJSON(w http.ResponseWriter, v interface{}) error {
+	return json.NewEncoder(w).Encode(v)
 }
 
 func main() {
 	var err error
-	if secrets, err = getSQLConfig("config.yaml"); err != nil {
-		log.Fatalf("failed to get secrets: %s", err)
+	e := Entangle{Config: "config.yaml"}
+	if err = e.startUp("local"); err != nil {
+		log.Fatalf("failed to start api server: %s", err)
 	}
-	if err = connect("local"); err != nil {
-		log.Fatalf("failed to connect: %s", err)
-	}
-	log.Println("db connected successfully.")
-	r := mux.NewRouter()
-	r.HandleFunc("/", HomeHandler)
-	r.HandleFunc("/products", ProductsHandler)
-	r.HandleFunc("/popular", PopularHandler)
-	r.HandleFunc("/product/{id}", ProductHandler)
-
-	log.Fatal(http.ListenAndServe(":8181", handlers.CORS()(r)))
+	e.run(":8181")
 }

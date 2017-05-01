@@ -32,17 +32,17 @@ func (c *config) env(env string) (*mysql.Config, error) {
 	switch env {
 	case "cloudDev":
 		cfg = &mysql.Config{
-			Addr:   secrets.CloudSQLDev.Address,
-			User:   secrets.CloudSQLDev.Username,
-			Passwd: secrets.CloudSQLDev.Password,
-			DBName: secrets.CloudSQLDev.DBName,
+			Addr:   c.CloudSQLDev.Address,
+			User:   c.CloudSQLDev.Username,
+			Passwd: c.CloudSQLDev.Password,
+			DBName: c.CloudSQLDev.DBName,
 		}
 	case "local":
 		cfg = &mysql.Config{
-			Addr:   secrets.LocalSQLDev.Address,
-			User:   secrets.LocalSQLDev.Username,
-			Passwd: secrets.LocalSQLDev.Password,
-			DBName: secrets.LocalSQLDev.DBName,
+			Addr:   c.LocalSQLDev.Address,
+			User:   c.LocalSQLDev.Username,
+			Passwd: c.LocalSQLDev.Password,
+			DBName: c.LocalSQLDev.DBName,
 		}
 	case "prod":
 		err = fmt.Errorf("production not implmenented")

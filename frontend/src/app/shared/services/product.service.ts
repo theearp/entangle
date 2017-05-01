@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/publishReplay';
 
 import { Product, FakeProduct } from '../models/product';
 
@@ -65,6 +66,7 @@ export class ProductService {
   allProducts = this.baseUrl + 'products';
   popularProducts = this.baseUrl + 'popular';
   productByID = this.baseUrl + 'product'
+  productByCategory = this.baseUrl + 'product_category';
 
   constructor(private http: Http) {}
 
@@ -110,6 +112,16 @@ export class ProductService {
     return this.http.get(this.productByID + '/' + id)
       .map(response => <Product> response.json())
       .catch(this.handleError)
+      .publishReplay(1)
+      .refCount()
+  }
+
+  getProductsByCategory(id): Observable<Product[]> {
+    return this.http.get(this.productByCategory + '/' + id)
+    .map(response => <Product> response.json())
+      .catch(this.handleError)
+      .publishReplay(1)
+      .refCount()
   }
 
   private handleError (error: Response | any) {

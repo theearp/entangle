@@ -3,18 +3,12 @@
     <md-card-header>
       <div md-card-avatar class="example-header-image"></div>
       <md-card-title>{{ product.title }}</md-card-title>
-      <md-card-subtitle>{{ product.category_id }}</md-card-subtitle>
     </md-card-header>
     <img md-card-image src="assets/bullets.jpg">
-    <md-card-content>
-      <p>
-        Description
-      </p>
-    </md-card-content>
     <md-card-actions>
       <button md-button [routerLink]="['/product/details', product.listing_id ]">Details</button>
       <button md-button (click)="updateShoppingCart(product)">
-        {{ product.price }}
+        {{ product.price | currency:'USD':true }}
         <md-icon>add_shopping_cart</md-icon>
       </button>
     </md-card-actions>

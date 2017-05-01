@@ -12,8 +12,12 @@ import { AppComponent } from './app.component';
 import { ProductComponent } from './product/product.component';
 import { ProductDetailComponent } from './product/productDetail.component';
 import { PopularProductsComponent } from './product/popular.component';
-import { ShoppingService } from './shared/services/shopping.service';
+import { ProductCategoryComponent } from './product/productCategory.component';
 import { SharedComponent } from './shared/shared.component';
+import { CartComponent } from './cart/cart.component';
+
+import { ShoppingService } from './shared/services/shopping.service';
+import { CategoryService } from './shared/services/category.service';
 
 @NgModule({
   declarations: [
@@ -21,7 +25,9 @@ import { SharedComponent } from './shared/shared.component';
     ProductComponent,
     ProductDetailComponent,
     PopularProductsComponent,
-    SharedComponent
+    ProductCategoryComponent,
+    SharedComponent,
+    CartComponent
   ],
   imports: [
     BrowserModule,
@@ -35,7 +41,8 @@ import { SharedComponent } from './shared/shared.component';
   ],
   providers: [
     MdIconRegistry, 
-    ShoppingService
+    ShoppingService,
+    CategoryService
   ],
   bootstrap: [AppComponent]
 })
