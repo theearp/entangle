@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ShoppingService } from './shared/services/shopping.service';
 import { CategoryService } from './shared/services/category.service';
-import { Category } from './shared/models/category';
+import { Category, Section } from './shared/models/category';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +11,7 @@ import { Category } from './shared/models/category';
 })
 export class AppComponent implements OnInit {
   categories: Category[];
+  sections: Section[];
 
   constructor(private ss: ShoppingService, private cs: CategoryService) {}
 
@@ -21,5 +22,8 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.cs.getCategories()
      .subscribe(data => this.categories = data);
+
+     this.cs.getSections()
+      .subscribe(data => this.sections = data);
   }
 }

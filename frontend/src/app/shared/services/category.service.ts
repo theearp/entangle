@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
-import { Category } from '../models/category';
+import { Category, Section } from '../models/category';
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
@@ -13,8 +13,15 @@ export class CategoryService {
   baseUrl = 'http://localhost:8181/';
   categories = this.baseUrl + 'categories';
   category = this.baseUrl + 'category';
+  sections = this.baseUrl + 'sections';
 
   constructor(private http: Http) {}
+
+  getSections(): Observable<Section[]> {
+    return this.http.get(this.sections)
+     .map(response => <Section[]> response.json())
+     .catch(this.handleError);
+  }
 
   getCategories(): Observable<Category[]> {
     return this.http.get(this.categories)

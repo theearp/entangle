@@ -32,6 +32,18 @@ func connect(env string) error {
 	return db.Ping()
 }
 
+func createSectionsTable() error {
+	stmt := `CREATE TABLE IF NOT EXISTS etsy_Sections (
+							shop_section_id				BIGINT,
+							title									VARCHAR(255),
+							rank									BIGINT,
+							user_id								BIGINT,
+							active_listing_count 	BIGINT
+	)`
+	_, err := db.Exec(stmt)
+	return err
+}
+
 func createCategoryTable() error {
 	stmt := `CREATE TABLE IF NOT EXISTS etsy_Categories (
 							category_id				BIGINT,		
@@ -138,6 +150,27 @@ func writeCategories(c *GetCategoriesResponse) error {
 			category.ShortName,
 			category.LongName,
 			category.NumChildren)
+		if err != nil {
+			log.Printf("failed to write stmt: %s", stmt)
+		}
+	}
+	return nil
+}
+
+func writeSections(c *GetSectionsResponse) error {
+	stmt := `INSERT INTO etsy_Sections (
+			shop_section_id,			
+			title,	
+			rank,								
+			user_id,							
+			active_listing_count) VALUES (?,?,?,?,?)`
+	for _, section := range c.Results {
+		_, err := db.Exec(stmt,
+			section.ShopSectionID,
+			section.Title,
+			section.Rank,
+			section.UserID,
+			section.ActiveListingCount)
 		if err != nil {
 			log.Printf("failed to write stmt: %s", stmt)
 		}

@@ -79,7 +79,7 @@ type Category struct {
 	NumChildren     int    `json:"num_children"`
 }
 
-// GetCategoriesResponse represents the response from esty/v2/taxonomy/categories.
+// GetCategoriesResponse represents the response from esty/v2/shops/:shop_id/sections.
 type GetCategoriesResponse struct {
 	Count      int        `json:"count"`
 	Results    []Category `json:"results"`
@@ -90,5 +90,62 @@ type GetCategoriesResponse struct {
 		NextOffset      int `json:"next_offset"`
 		EffectivePage   int `json:"effective_page"`
 		NextPage        int `json:"next_page"`
+	} `json:"pagination"`
+}
+
+// Section represents a section, what I think of as a category.
+type Section struct {
+	ShopSectionID      int    `json:"shop_section_id"`
+	Title              string `json:"title"`
+	Rank               int    `json:"rank"`
+	UserID             int    `json:"user_id"`
+	ActiveListingCount int    `json:"active_listing_count"`
+}
+
+// GetSectionsResponse represents the response from esty/v2/taxonomy/categories.
+type GetSectionsResponse struct {
+	Count      int       `json:"count"`
+	Results    []Section `json:"results"`
+	Type       string    `json:"type"`
+	Pagination struct {
+		EffectiveLimit  int `json:"effective_limit"`
+		EffectiveOffset int `json:"effective_offset"`
+		NextOffset      int `json:"next_offset"`
+		EffectivePage   int `json:"effective_page"`
+		NextPage        int `json:"next_page"`
+	} `json:"pagination"`
+}
+
+// ListingImage is represents a listings image data.
+type ListingImage struct {
+	ListingImageID  int         `json:"listing_image_id"`
+	HexCode         string      `json:"hex_code"`
+	Red             int         `json:"red"`
+	Green           int         `json:"green"`
+	Blue            int         `json:"blue"`
+	Hue             int         `json:"hue"`
+	Saturation      int         `json:"saturation"`
+	Brightness      int         `json:"brightness"`
+	IsBlackAndWhite interface{} `json:"is_black_and_white"`
+	CreationTsz     int         `json:"creation_tsz"`
+	ListingID       int         `json:"listing_id"`
+	Rank            int         `json:"rank"`
+	URL75X75        string      `json:"url_75x75"`
+	URL170X135      string      `json:"url_170x135"`
+	URL570XN        string      `json:"url_570xN"`
+	URLFullxfull    string      `json:"url_fullxfull"`
+	FullHeight      int         `json:"full_height"`
+	FullWidth       int         `json:"full_width"`
+}
+
+// GetListingImagesResponse is the response from etsy/v2/listings/:listing_id/images
+type GetListingImagesResponse struct {
+	Count   int            `json:"count"`
+	Results []ListingImage `json:"results"`
+	Params  struct {
+		ListingID string `json:"listing_id"`
+	} `json:"params"`
+	Type       string `json:"type"`
+	Pagination struct {
 	} `json:"pagination"`
 }

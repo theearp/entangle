@@ -11,3 +11,11 @@ export class Category {
   LongName: string;
   NumChildren: number;   
 }
+
+export class Section {
+  ShopSectionID: number;
+	Title: string; 
+	Rank: number;    
+	UserID: number    
+	ActiveListingCount: number;    
+}

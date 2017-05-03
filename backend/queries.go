@@ -137,6 +137,36 @@ func queryCategories(db *sql.DB) ([]category, error) {
 	return categories, rows.Err()
 }
 
+func querySections(db *sql.DB) ([]section, error) {
+	t1 := time.Now()
+	rows, err := db.Query(`SELECT 
+			shop_section_id,			
+			title,	
+			rank,								
+			user_id,							
+			active_listing_count from etsy_Sections`)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get sections: %s", err)
+	}
+	defer rows.Close()
+	var sections []section
+	for rows.Next() {
+		var s section
+		if err := rows.Scan(
+			&s.ShopSectionID,
+			&s.Title,
+			&s.Rank,
+			&s.UserID,
+			&s.ActiveListingCount,
+		); err != nil {
+			return nil, fmt.Errorf("failed to get row: %s", err)
+		}
+		sections = append(sections, s)
+	}
+	log.Printf("Query took %v", time.Now().Sub(t1))
+	return sections, rows.Err()
+}
+
 func (c *category) getCategory(db *sql.DB) error {
 	return errors.New("Not Implmeneted")
 }

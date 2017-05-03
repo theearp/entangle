@@ -54,6 +54,7 @@ func (e *Entangle) resgisterRoutes() {
 	e.Router.HandleFunc("/product/{id}", e.product).Methods("GET")
 	e.Router.HandleFunc("/categories", e.categories).Methods("GET")
 	e.Router.HandleFunc("/product_category/{id}", e.productCategory).Methods("GET")
+	e.Router.HandleFunc("/sections", e.sections).Methods("GET")
 }
 
 func (e *Entangle) run(addr string) {
@@ -144,6 +145,20 @@ func (e *Entangle) productCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("%d /products returned successfully in %v", len(products), time.Now().Sub(t1))
+}
+
+func (e *Entangle) sections(w http.ResponseWriter, r *http.Request) {
+	t1 := time.Now()
+	cs, err := querySections(e.DB)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("could not get sections: %s", err), http.StatusInternalServerError)
+		return
+	}
+	if err := renderJSON(w, cs); err != nil {
+		http.Error(w, "failed to encode", http.StatusInternalServerError)
+		return
+	}
+	log.Printf("%d /sections returned successfully in %v", len(cs), time.Now().Sub(t1))
 }
 
 func renderJSON(w http.ResponseWriter, v interface{}) error {
