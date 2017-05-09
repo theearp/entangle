@@ -1,21 +1,5 @@
 package main
 
-import (
-	"database/sql"
-	"errors"
-)
-
-type product struct {
-	ListingID   int    `json:"listing_id"`
-	State       string `json:"state"`
-	UserID      int    `json:"user_id"`
-	CategoryID  int    `json:"category_id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Price       string `json:"price"`
-	Views       int64  `json:"views"`
-}
-
 type category struct {
 	CategoryID      int    `json:"category_id"`
 	Name            string `json:"name"`
@@ -36,23 +20,4 @@ type section struct {
 	Rank               int    `json:"rank"`
 	UserID             int    `json:"user_id"`
 	ActiveListingCount int    `json:"active_listing_count"`
-}
-
-type cart struct {
-}
-
-func (c *cart) getCart(db *sql.DB) error {
-	return errors.New("Not Implmeneted")
-}
-
-func (c *cart) updateCart(db *sql.DB) error {
-	return errors.New("Not Implmeneted")
-}
-
-func (c *cart) deleteCart(db *sql.DB) error {
-	return errors.New("Not Implmeneted")
-}
-
-func (c *cart) createCart(db *sql.DB) error {
-	return errors.New("Not Implmeneted")
 }
