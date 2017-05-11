@@ -9,25 +9,20 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 import { AppComponent } from './app.component';
-import { ProductComponent } from './product/product.component';
-import { ProductDetailComponent } from './product/productDetail.component';
-import { PopularProductsComponent } from './product/popular.component';
-import { ProductCategoryComponent } from './product/productCategory.component';
 import { SharedComponent } from './shared/shared.component';
 import { CartComponent } from './cart/cart.component';
 
 import { ShoppingService } from './shared/services/shopping.service';
 import { CategoryService } from './shared/services/category.service';
+import { ListingService } from './shared/services/listing.service';
+import { AboutComponent } from './about/about.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ProductComponent,
-    ProductDetailComponent,
-    PopularProductsComponent,
-    ProductCategoryComponent,
     SharedComponent,
-    CartComponent
+    CartComponent,
+    AboutComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +37,8 @@ import { CategoryService } from './shared/services/category.service';
   providers: [
     MdIconRegistry, 
     ShoppingService,
-    CategoryService
+    CategoryService,
+    ListingService
   ],
   bootstrap: [AppComponent]
 })

@@ -5,7 +5,7 @@ import (
 )
 
 type listing struct {
-	ID                  bson.ObjectId `bson:"_id"`
+	ID                  bson.ObjectId `bson:"_id" json:"id"`
 	ListingID           int           `json:"listing_id"`
 	State               string        `json:"state"`
 	UserID              int           `json:"user_id"`

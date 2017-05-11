@@ -1,43 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params }   from '@angular/router';
+import { Location }                 from '@angular/common';
 
 import { Listing } from '../shared/models/listing';
 import { ListingService } from '../shared/services/listing.service';
 import { ShoppingService } from '../shared/services/shopping.service';
 
+import 'rxjs/add/operator/switchMap';
+
 @Component({
-  selector: 'listing',
+  selector: 'listing-category',
   templateUrl: './listing.component.html',
   styleUrls: ['./listing.component.css'],
   providers: [ListingService]
 })
-export class ListingComponent implements OnInit {
-  popular: boolean;
+
+export class ListingCategoryComponent implements OnInit {
   listings: Listing[];
+  selectedListing: Listing;
   constructor(
-    private ls: ListingService, 
+    private ps: ListingService, 
     private ss: ShoppingService,
-    private r: ActivatedRoute
+    private route: ActivatedRoute
     ) {
   }
   
   ngOnInit() {
-    this.r.data.subscribe(v => this.popular = v.popular);
-    this.ls.getListings()
-    .subscribe(data => {
-      if (this.popular) {
-        this.listings = data.slice(1, 10);
-      } else {
-        this.listings = data;
-      }
-    });
   }
 
   updateShoppingCart(listing: Listing) {
     this.ss.addItemToCart(listing);
+    console.log(listing);
   }
 
-  syncListing(id: string) {
-    this.ls.syncListing(id);
+  showDetails(listing: Listing) {
+    this.selectedListing = listing;
   }
 }

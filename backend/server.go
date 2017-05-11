@@ -47,6 +47,8 @@ func (e *Entangle) registerRoutes() {
 	e.Router.HandleFunc("/listings", e.listings).Methods("GET", "UPDATE")
 	e.Router.HandleFunc("/listing/{id}", e.getListing).Methods("GET")
 	e.Router.HandleFunc("/listing/{id}/sync", e.syncListing).Methods("GET")
+	e.Router.HandleFunc("/sections/sync", e.syncSections).Methods("GET")
+	e.Router.HandleFunc("/sections", e.sections).Methods("GET")
 }
 
 func (e *Entangle) run(addr string) {

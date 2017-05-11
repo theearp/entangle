@@ -20,9 +20,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.cs.getCategories()
-     .subscribe(data => this.categories = data);
-
      this.cs.getSections()
       .subscribe(data => this.sections = data);
   }

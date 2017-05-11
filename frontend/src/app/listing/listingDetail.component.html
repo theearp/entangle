@@ -1,4 +1,4 @@
-<md-grid-list cols="6" rowHeight="200px" *ngIf="product">
+<md-grid-list cols="6" rowHeight="200px" *ngIf="listing">
   <md-grid-tile 
     [colspan]="3" 
     [rowspan]="3">
@@ -9,15 +9,18 @@
     [rowspan]="2" 
     [style.background]="'lightgreen'">
     Description
-    {{ product.description }}
+    {{ listing.description }}
   </md-grid-tile>
   <md-grid-tile 
     [colspan]="3" 
     [rowspan]="1" 
     [style.background]="'lightpink'">
     Size/Quantity Options/Add to cart.
-    <button md-button (click)="updateShoppingCart(product)">
+    <button md-button (click)="updateShoppingCart(listing)">
       <md-icon>add_shopping_cart</md-icon>
+    </button>
+    <button md-button (click)="syncListing(listing.id)">
+      <md-icon>cached</md-icon>
     </button>
   </md-grid-tile>
 </md-grid-list>

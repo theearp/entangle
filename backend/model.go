@@ -13,11 +13,3 @@ type category struct {
 	LongName        string `json:"long_name"`
 	NumChildren     int    `json:"num_children"`
 }
-
-type section struct {
-	ShopSectionID      int    `json:"shop_section_id"`
-	Title              string `json:"title"`
-	Rank               int    `json:"rank"`
-	UserID             int    `json:"user_id"`
-	ActiveListingCount int    `json:"active_listing_count"`
-}
