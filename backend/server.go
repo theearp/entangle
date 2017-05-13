@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
@@ -59,7 +60,7 @@ func (e *Entangle) registerRoutes() {
 
 func (e *Entangle) run(addr string) {
 	log.Println("Serving API")
-	log.Fatal(http.ListenAndServe(addr, handlers.CORS()(e.Router)))
+	http.ListenAndServe(addr, logger(handlers.CORS()(e.Router)))
 }
 
 func (e *Entangle) home(w http.ResponseWriter, r *http.Request) {
@@ -68,6 +69,14 @@ func (e *Entangle) home(w http.ResponseWriter, r *http.Request) {
 
 func renderJSON(w http.ResponseWriter, v interface{}) error {
 	return json.NewEncoder(w).Encode(v)
+}
+
+func logger(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		defer log.Printf("%s %s %s: %s", r.RemoteAddr, r.Method, r.URL, time.Since(start))
+		handler.ServeHTTP(w, r)
+	})
 }
 
 func main() {

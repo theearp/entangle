@@ -20,5 +20,6 @@ func (e *Entangle) offerings(w http.ResponseWriter, r *http.Request) {
 	if err := e.DB.C("products").Find(bson.M{"reference": ref}).All(&o); err != nil {
 		http.Error(w, fmt.Sprintf("failed to fetch offerings: %s", err), http.StatusInternalServerError)
 	}
+
 	renderJSON(w, o)
 }
