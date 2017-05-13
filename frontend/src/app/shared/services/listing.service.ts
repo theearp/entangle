@@ -3,6 +3,7 @@ import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { Listing } from '../models/listing';
+import { Image } from '../models/image';
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
@@ -19,18 +20,26 @@ export class ListingService {
 
   getListings(): Observable<Listing[]> {
     return this.http.get(this.listings)
-     .map(response => <Listing[]> response.json())
+     .map(response => <Listing[]> response.json() || [])
      .catch(this.handleError);
   }
 
-  getListing(id: number): Observable<Listing> {
+  getListing(id: string): Observable<Listing> {
     return this.http.get(this.listing + id)
-    .map(response => <Listing> response.json())
-    .catch(this.handleError)
+    .map(response => <Listing> response.json() || {})
+    .catch(this.handleError);
   }
 
-  syncListing(id: string) {
-    console.log(id);
+  getImages(id: string): Observable<Image[]> {
+    return this.http.get(this.listing + id + '/images')
+    .map(data => <Image[]> data.json() || [])
+    .catch(this.handleError);
+  }
+
+  syncListing(id: string): Observable<String> {
+    return this.http.get(this.baseUrl + '/listing/' + id + '/sync')
+    .map(resp => resp.json() || '')
+    .catch(this.handleError);
   }
 
   private handleError (error: Response | any) {

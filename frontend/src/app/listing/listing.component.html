@@ -1,12 +1,23 @@
-<div class="listing-container">
+<md-card class="listing-card" *ngFor="let listing of listings">
 
-  <md-card class="listing-card">
-    
-    <md-card-header>
-      <md-card-title>id</md-card-title>
-      <md-card-subtitle>number</md-card-subtitle>
-    </md-card-header>
+  <md-card-header>
+    <md-card-title [innerHtml]="listing.title"></md-card-title>
+    <md-card-subtitle>{{ listing.views }}</md-card-subtitle>
+  </md-card-header>
 
-    <md-card-content>Some content</md-card-content>
-  </md-card>
-</div>
+  <app-image [id]="listing.id"></app-image>
+  <md-card-content></md-card-content>
+
+  <md-card-actions>
+    <button md-button [routerLink]=" ['./', listing.id]">
+      <md-icon>info</md-icon>
+    </button>
+    <button md-button (click)="addToCart(listing)">
+      <md-icon>shopping_cart</md-icon>
+    </button>
+    <button md-button (click)="syncListing(listing.id)">
+      <md-icon>cached</md-icon>
+    </button>
+  </md-card-actions>
+
+</md-card>

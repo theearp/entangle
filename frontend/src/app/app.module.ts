@@ -16,13 +16,17 @@ import { ShoppingService } from './shared/services/shopping.service';
 import { CategoryService } from './shared/services/category.service';
 import { ListingService } from './shared/services/listing.service';
 import { AboutComponent } from './about/about.component';
+import { ListingComponent } from './listing/listing.component';
+import { ImageComponent } from './image/image.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SharedComponent,
     CartComponent,
-    AboutComponent
+    AboutComponent,
+    ListingComponent,
+    ImageComponent
   ],
   imports: [
     BrowserModule,

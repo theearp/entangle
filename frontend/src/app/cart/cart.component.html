@@ -1,3 +1,18 @@
-<p>
-  cart works!
-</p>
+<div class="shopping-cart-container">
+
+  <md-list>
+    <md-list-item *ngFor="let item of cart">
+      <button md-icon-button md-list-avatar>
+        <md-icon>delete</md-icon>
+      </button>
+      <h3 md-line [innerHtml]="item.title"></h3>
+      
+      <span> {{ item.price }} </span>
+
+      <button md-icon-button>
+        <md-icon>info</md-icon>
+      </button>
+    </md-list-item>
+  </md-list>
+
+</div>

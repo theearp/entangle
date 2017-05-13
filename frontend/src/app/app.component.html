@@ -5,12 +5,14 @@
   <span class="fill-remaining-space"></span>
   
   <button md-button [routerLink]="['']" routerLinkActive="active">Home</button>
+  <button md-button [routerLink]=" ['./listing']">Shop</button>
   <button md-button [routerLink]=" ['./about']">About Us</button>
   
   <button md-button>Shipping</button>
   <button md-button>Return Policy</button>
-  <button md-icon-button (click)="showCart()">
+  <button md-icon-button [routerLink]=" ['./shopping_cart']">
     <md-icon>shopping_cart</md-icon>
+    {{ cartCount }}
   </button>
 </md-toolbar>
 
@@ -26,7 +28,7 @@
   </md-toolbar>
 </div>
 
-<main class="routerContainer">
+<main class="router-container">
   <router-outlet></router-outlet>
 </main>
 

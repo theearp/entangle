@@ -12,15 +12,21 @@ import { Category, Section } from './shared/models/category';
 export class AppComponent implements OnInit {
   categories: Category[];
   sections: Section[];
+  cartCount: Number;
 
   constructor(private ss: ShoppingService, private cs: CategoryService) {}
 
   showCart() {
-    console.log('Number of items in cart: ' + this.ss.cartItems.length);
+    console.log('Number of items in cart: ' + this.cartCount);
   }
 
   ngOnInit() {
      this.cs.getSections()
       .subscribe(data => this.sections = data);
+
+      this.ss.get()
+      .subscribe(data => {
+        this.cartCount = data.length;
+      });
   }
 }

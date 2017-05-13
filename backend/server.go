@@ -44,11 +44,17 @@ func (e *Entangle) registerRoutes() {
 	log.Println("initializing routes...")
 	e.Router = mux.NewRouter()
 	e.Router.HandleFunc("/", e.home).Methods("GET")
-	e.Router.HandleFunc("/listings", e.listings).Methods("GET", "UPDATE")
-	e.Router.HandleFunc("/listing/{id}", e.getListing).Methods("GET")
-	e.Router.HandleFunc("/listing/{id}/sync", e.syncListing).Methods("GET")
+
+	// Sections
 	e.Router.HandleFunc("/sections/sync", e.syncSections).Methods("GET")
 	e.Router.HandleFunc("/sections", e.sections).Methods("GET")
+
+	// Listings
+	e.Router.HandleFunc("/listings", e.listings).Methods("GET", "UPDATE")
+	e.Router.HandleFunc("/listing/{id}", e.getListing).Methods("GET")
+	e.Router.HandleFunc("/listing/{id}/offerings", e.offerings).Methods("GET")
+	e.Router.HandleFunc("/listing/{id}/images", e.images).Methods("GET")
+	e.Router.HandleFunc("/listing/{id}/sync", e.syncListing).Methods("GET")
 }
 
 func (e *Entangle) run(addr string) {
