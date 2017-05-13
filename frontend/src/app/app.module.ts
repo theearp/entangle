@@ -15,6 +15,7 @@ import { CartComponent } from './cart/cart.component';
 import { ShoppingService } from './shared/services/shopping.service';
 import { CategoryService } from './shared/services/category.service';
 import { ListingService } from './shared/services/listing.service';
+import { MessageService } from './shared/services/message.service';
 import { AboutComponent } from './about/about.component';
 import { ListingComponent } from './listing/listing.component';
 import { ImageComponent } from './image/image.component';
@@ -42,7 +43,8 @@ import { ImageComponent } from './image/image.component';
     MdIconRegistry, 
     ShoppingService,
     CategoryService,
-    ListingService
+    ListingService,
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

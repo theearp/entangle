@@ -47,11 +47,14 @@ export class ListingService {
     if (error instanceof Response) {
       const body = error.json() || '';
       const err = body.error || JSON.stringify(body);
-      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+      if (error.status == 0) {
+        errMsg = 'failed to contact backend';
+      } else {
+        errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+      }
     } else {
       errMsg = error.message ? error.message : error.toString();
     }
-    console.error(errMsg);
     return Observable.throw(errMsg);
   }
 };

@@ -23,30 +23,19 @@ export class CategoryService {
      .catch(this.handleError);
   }
 
-  getCategories(): Observable<Category[]> {
-    return this.http.get(this.categories)
-     .map(response => <Category[]> response.json())
-     .catch(this.handleError);
-  }
-
-  getCategory(id): Observable<Category> {
-    return this.http.get(this.category + '/' + id)
-      .map(response => <Category> response.json())
-      .catch(this.handleError)
-      .publishReplay(1)
-      .refCount()
-  }
-
   private handleError (error: Response | any) {
     let errMsg: string;
     if (error instanceof Response) {
       const body = error.json() || '';
       const err = body.error || JSON.stringify(body);
-      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+      if (error.status == 0) {
+        errMsg = 'failed to contact backend';
+      } else {
+        errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+      }
     } else {
       errMsg = error.message ? error.message : error.toString();
     }
-    console.error(errMsg);
     return Observable.throw(errMsg);
   }
 };
