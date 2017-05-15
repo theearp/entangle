@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule, JsonpModule } from '@angular/http';
 import { AppRoutingModule } from './app.routing';
 import { MaterialModule, MdIconRegistry } from '@angular/material';
-import { NglModule } from 'ng-lightning/ng-lightning';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
@@ -36,7 +35,6 @@ import { ImageComponent } from './image/image.component';
     JsonpModule,
     MaterialModule,
     AppRoutingModule,
-    NglModule.forRoot(),
     BrowserAnimationsModule
   ],
   providers: [
