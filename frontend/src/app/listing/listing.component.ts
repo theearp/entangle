@@ -33,4 +33,8 @@ export class ListingComponent implements OnInit {
   addToCart(l: Listing) {
     this.shoppingService.add(l);
   }
+
+  listingByCart(id: number) {
+    console.log(id);
+  }
 }

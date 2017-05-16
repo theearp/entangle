@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { Image } from '../shared/models/image';
 import { ListingService } from '../shared/services/listing.service';
+import { ImageService } from '../shared/services/image.service';
 
 @Component({
   selector: 'app-image',
@@ -12,13 +13,17 @@ export class ImageComponent implements OnInit {
   @Input()
   id: string;
 
-  image: Image[];
-  constructor(private listingService: ListingService) { }
+  images: Image[];
+  image: Image;
+  constructor(
+    private listingService: ListingService,
+    private imageService: ImageService) { }
 
   ngOnInit() {
-    this.listingService.getImages(this.id)
+    this.imageService.get(this.id)
     .subscribe(data => {
-      this.image = data;
+      this.images = data;
+      this.image = data[0];
     })
   }
 }

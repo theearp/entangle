@@ -2,7 +2,7 @@
 
   <md-card-header>
     <md-card-title [innerHtml]="listing.title"></md-card-title>
-    <md-card-subtitle>{{ listing.views }}</md-card-subtitle>
+    <md-card-subtitle>{{ listing.views }} {{ listing.num_favorers }} </md-card-subtitle>
   </md-card-header>
 
   <app-image [id]="listing.id"></app-image>

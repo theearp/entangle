@@ -20,7 +20,7 @@
   <md-toolbar>
     <button md-button [mdMenuTriggerFor]="menu">Sections</button>
     <md-menu #menu="mdMenu">
-      <button md-menu-item *ngFor="let section of sections">{{ section.title }}</button>
+      <button md-menu-item *ngFor="let section of sections" (click)="listingBySection(section.shop_section_id)">{{ section.title }}</button>
     </md-menu>
     <md-input-container>
       <input type="search" mdInput placeholder="search">

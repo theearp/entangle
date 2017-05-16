@@ -30,12 +30,6 @@ export class ListingService {
     .catch(this.handleError);
   }
 
-  getImages(id: string): Observable<Image[]> {
-    return this.http.get(this.listing + id + '/images')
-    .map(data => <Image[]> data.json() || [])
-    .catch(this.handleError);
-  }
-
   syncListing(id: string): Observable<String> {
     return this.http.get(this.baseUrl + '/listing/' + id + '/sync')
     .map(resp => resp.json() || '')

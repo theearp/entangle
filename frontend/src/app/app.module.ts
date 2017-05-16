@@ -15,8 +15,10 @@ import { ShoppingService } from './shared/services/shopping.service';
 import { CategoryService } from './shared/services/category.service';
 import { ListingService } from './shared/services/listing.service';
 import { MessageService } from './shared/services/message.service';
+import { ImageService } from './shared/services/image.service';
 import { AboutComponent } from './about/about.component';
 import { ListingComponent } from './listing/listing.component';
+import { ListingDetailComponent } from './listing/listing-detail.component';
 import { ImageComponent } from './image/image.component';
 
 @NgModule({
@@ -26,6 +28,7 @@ import { ImageComponent } from './image/image.component';
     CartComponent,
     AboutComponent,
     ListingComponent,
+    ListingDetailComponent,
     ImageComponent
   ],
   imports: [
@@ -42,7 +45,8 @@ import { ImageComponent } from './image/image.component';
     ShoppingService,
     CategoryService,
     ListingService,
-    MessageService
+    MessageService,
+    ImageService
   ],
   bootstrap: [AppComponent]
 })
